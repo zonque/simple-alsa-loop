@@ -1,37 +1,20 @@
 /*
- *
  * Copyright (c) 2012 Daniel Mack
  *
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * General Public License for more details.
  *
  */
 
 /*
- * This tool is super simple does nothing but a loop-through between the
- * default capture and default playback device. The difference between this
- * tool and a cheap "aplay | arecord" is that this program will start writing
- * samples regardless whether there was any input from the capute device yet.
- *
- * This was needed for embedded hardware that isn't able to record unless the
- * playback stream is running.
- *
- * On top of that, it might serve as an example to anyone who wants to write
- * a simple ALSA application.
- *
- * Heavily based on sniplets found at
- *   http://equalarea.com/paul/alsa-audio.html
+ * See README
  */
 
 #include <stdio.h>
@@ -182,5 +165,6 @@ int main(int argc, char *argv[])
 	}
 
 	snd_pcm_close(playback_handle);
+	snd_pcm_close(capture_handle);
 	return 0;
 }

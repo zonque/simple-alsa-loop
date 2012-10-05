@@ -1,0 +1,18 @@
+This super simple tool does nothing but a loop-through between the default
+capture and default playback device. The difference between this tool and
+a cheap "aplay | arecord" is that this program will start writing samples
+regardless whether there was any input from the capute device yet.
+
+This was needed for embedded hardware that isn't able to record unless the
+playback stream is running.
+
+Everything is hard-coded to achieve just that.
+
+On top of that, it might serve as an example to anyone who wants to write
+an ALSA application.
+
+Heavily based on sniplets found at
+
+	http://equalarea.com/paul/alsa-audio.html
+
+Released under the GPLv2.
