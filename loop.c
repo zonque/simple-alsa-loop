@@ -30,13 +30,13 @@ int buf[BUFSIZE * 2];
 static unsigned int rate = 192000;
 static unsigned int format = SND_PCM_FORMAT_S32_LE;
 
-static int open_stream(snd_pcm_t **handle, int dir)
+static int open_stream(snd_pcm_t **handle, const char *name, int dir)
 {
 	snd_pcm_hw_params_t *hw_params;
 	snd_pcm_sw_params_t *sw_params;
 	int err;
 
-	if ((err = snd_pcm_open(handle, "default", dir, 0)) < 0) {
+	if ((err = snd_pcm_open(handle, name, dir, 0)) < 0) {
 		fprintf(stderr, "cannot open audio device (%s)\n", 
 			 snd_strerror(err));
 		return err;
@@ -119,10 +119,10 @@ int main(int argc, char *argv[])
 {
 	int err;
 
-	if ((err = open_stream(&playback_handle, SND_PCM_STREAM_PLAYBACK)) < 0)
+	if ((err = open_stream(&playback_handle, "default", SND_PCM_STREAM_PLAYBACK)) < 0)
 		return err;
 
-	if ((err = open_stream(&capture_handle, SND_PCM_STREAM_CAPTURE)) < 0)
+	if ((err = open_stream(&capture_handle, "default", SND_PCM_STREAM_CAPTURE)) < 0)
 		return err;
 
 	if ((err = snd_pcm_prepare(playback_handle)) < 0) {
