@@ -34,81 +34,82 @@ static int open_stream(snd_pcm_t **handle, const char *name, int dir)
 {
 	snd_pcm_hw_params_t *hw_params;
 	snd_pcm_sw_params_t *sw_params;
+	const char *dirname = (dir == SND_PCM_STREAM_PLAYBACK) ? "PLAYBACK" : "CAPTURE";
 	int err;
 
 	if ((err = snd_pcm_open(handle, name, dir, 0)) < 0) {
-		fprintf(stderr, "cannot open audio device (%s)\n", 
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot open audio device (%s)\n", 
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 	   
 	if ((err = snd_pcm_hw_params_malloc(&hw_params)) < 0) {
-		fprintf(stderr, "cannot allocate hardware parameter structure(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot allocate hardware parameter structure(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 			 
 	if ((err = snd_pcm_hw_params_any(*handle, hw_params)) < 0) {
-		fprintf(stderr, "cannot initialize hardware parameter structure(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot initialize hardware parameter structure(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
 	if ((err = snd_pcm_hw_params_set_access(*handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-		fprintf(stderr, "cannot set access type(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set access type(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
 	if ((err = snd_pcm_hw_params_set_format(*handle, hw_params, format)) < 0) {
-		fprintf(stderr, "cannot set sample format(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set sample format(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
 	if ((err = snd_pcm_hw_params_set_rate_near(*handle, hw_params, &rate, NULL)) < 0) {
-		fprintf(stderr, "cannot set sample rate(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set sample rate(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
 	if ((err = snd_pcm_hw_params_set_channels(*handle, hw_params, 2)) < 0) {
-		fprintf(stderr, "cannot set channel count(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set channel count(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
 	if ((err = snd_pcm_hw_params(*handle, hw_params)) < 0) {
-		fprintf(stderr, "cannot set parameters(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set parameters(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
 	snd_pcm_hw_params_free(hw_params);
 
 	if ((err = snd_pcm_sw_params_malloc(&sw_params)) < 0) {
-		fprintf(stderr, "cannot allocate software parameters structure(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot allocate software parameters structure(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 	if ((err = snd_pcm_sw_params_current(*handle, sw_params)) < 0) {
-		fprintf(stderr, "cannot initialize software parameters structure(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot initialize software parameters structure(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 	if ((err = snd_pcm_sw_params_set_avail_min(*handle, sw_params, BUFSIZE)) < 0) {
-		fprintf(stderr, "cannot set minimum available count(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set minimum available count(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 	if ((err = snd_pcm_sw_params_set_start_threshold(*handle, sw_params, 0U)) < 0) {
-		fprintf(stderr, "cannot set start mode(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set start mode(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 	if ((err = snd_pcm_sw_params(*handle, sw_params)) < 0) {
-		fprintf(stderr, "cannot set software parameters(%s)\n",
-			 snd_strerror(err));
+		fprintf(stderr, "%s (%s): cannot set software parameters(%s)\n",
+			name, dirname, snd_strerror(err));
 		return err;
 	}
 
@@ -122,7 +123,7 @@ int main(int argc, char *argv[])
 	if ((err = open_stream(&playback_handle, "default", SND_PCM_STREAM_PLAYBACK)) < 0)
 		return err;
 
-	if ((err = open_stream(&capture_handle, "default", SND_PCM_STREAM_CAPTURE)) < 0)
+	if ((err = open_stream(&capture_handle, "hw:0,1", SND_PCM_STREAM_CAPTURE)) < 0)
 		return err;
 
 	if ((err = snd_pcm_prepare(playback_handle)) < 0) {
